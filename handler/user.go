@@ -92,8 +92,3 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
-// func UserHandler(w http.ResponseWriter, r *http.Request) {
-// // NewUser creates a new instance of User
-// 	fmt.Fprintf(w, "You have hit the user endpoint")
-// }

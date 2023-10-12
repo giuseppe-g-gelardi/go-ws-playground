@@ -5,6 +5,9 @@
 .env
 .env.*
 
+# ! we want to keep the example file
+!.env.example
+
 
 # * Binaries for programs and plugins
 *.exe
