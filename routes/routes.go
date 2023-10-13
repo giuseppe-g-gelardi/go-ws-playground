@@ -8,11 +8,10 @@ import (
 )
 
 func init() {
-	log.Info("Routes loaded")
+	log.Info("Successfully loaded routes")
 }
 
 func LoadRoutes() {
 	http.HandleFunc("/", handler.HelloHandler)
-	http.HandleFunc("/users", handler.GetUsers)
-	http.HandleFunc("/users/", handler.GetUser)
+	http.HandleFunc("/users", handler.QueryDBUsers)
 }

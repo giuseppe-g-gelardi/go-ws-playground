@@ -14,6 +14,7 @@ import (
 var (
 	port string
 	uri string
+	// db *database.Database
 )
 
 func init() {

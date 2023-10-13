@@ -9,8 +9,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+var Client *mongo.Client
+
 type Database struct {
-	URI string
+	URI    string
 }
 
 func NewDatabase(URI string) *Database {
@@ -25,19 +27,23 @@ func (db *Database) Connect() {
 	opts := options.Client().ApplyURI(d.URI).SetServerAPIOptions(serverAPI)
 
 	// create a new client and connect to the server
-	client, err := mongo.Connect(context.TODO(), opts)
+	var err error
+	Client, err = mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		log.Fatal(err, "Failed to connect to MongoDB")
 	}
 
 	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
+		if err := Client.Disconnect(context.TODO()); err != nil {
 			log.Fatal(err, "Failed to disconnect from MongoDB")
 		}
 	}()
 
 	// send ping to confirm a successful connection
-	if err := client.Database("admin").RunCommand(context.TODO(), bson.D{{Key: "ping", Value: 1}}).Err(); err != nil {
+	if err := Client.Database("admin").RunCommand(context.TODO(), bson.D{{
+		Key:   "ping",
+		Value: 1,
+	}}).Err(); err != nil {
 		log.Fatal(err, "Failed to ping MongoDB")
 	}
 	log.Info("Successfully connected to MongoDB")
