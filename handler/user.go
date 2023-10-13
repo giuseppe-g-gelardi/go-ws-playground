@@ -4,18 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	// "strings"
 
-	// "playground.com/m/mocks"
 	"playground.com/m/types"
-
 	"playground.com/m/database"
 
-	// "context"
 	"go.mongodb.org/mongo-driver/bson"
-	// "go.mongodb.org/mongo-driver/mongo"
-	// "go.mongodb.org/mongo-driver/mongo/options"
-
 	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 )
