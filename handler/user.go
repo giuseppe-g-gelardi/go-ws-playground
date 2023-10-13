@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"playground.com/m/types"
 	"playground.com/m/database"
+	"playground.com/m/types"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type User types.User
@@ -77,4 +77,3 @@ func NewUser(w http.ResponseWriter, r *http.Request) *User {
 	return &user
 
 }
-
