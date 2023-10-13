@@ -1,78 +1,78 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
-	"playground.com/m/database"
-	"playground.com/m/types"
+	uc "playground.com/m/controllers"
 
 	"github.com/charmbracelet/log"
-	"go.mongodb.org/mongo-driver/bson"
+	// "go.mongodb.org/mongo-driver/bson"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
+	// "playground.com/m/database"
+	// "playground.com/m/types"
 )
 
-type User types.User
+type RequestBody struct {
+	User_id string `json:"_id"`
+}
 
-func QueryDBUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := GetAllUsersFromDatabase()
+func QueryUser(w http.ResponseWriter, r *http.Request) {
+
+	var requestBody RequestBody
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&requestBody)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error("Failed to get users from database -- it keeps breaking here too")
+		http.Error(w, "Invalid JSON request", http.StatusBadRequest)
 		return
 	}
+
+	userID := requestBody.User_id
+	// log.Warn("userid", userID)
+
+
+
+
+	// // Convert the string ID into an ObjectID
+	// objectID, err := primitive.ObjectIDFromHex(userID)
+	// if err != nil {
+	// 	http.Error(w, "Invalid User ID format", http.StatusBadRequest)
+	// 	return
+	// }
+
+	// var result types.User
+	// collection := database.Client.Database("go-ws").Collection("users")
+
+	// err = collection.FindOne(r.Context(), bson.M{"_id": objectID}).Decode(&result)
+	// if err != nil {
+	// 	http.Error(w, "User not found", http.StatusNotFound)
+	// 	log.Error("Failed to get user from the database")
+	// 	return
+	// }
+
+	// log.Warn("user result", result)
+
+
+	user, err := uc.GetUserFromDatabase(userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Error("Failed to get user from database")
+		return
+	}
+
+
+
+
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(users); err != nil {
+	if err := json.NewEncoder(w).Encode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error("Failed to encode users")
+		log.Error("Failed to encode user")
 		return
 	}
+
+	log.Printf("User: %v", user)
+	// w.WriteHeader(http.StatusOK)
+	// w.Write([]byte(userID))
+
 }
-
-func GetAllUsersFromDatabase() ([]User, error) {
-	collection := database.Client.Database("go-ws").Collection("users")
-
-	var results []User
-	// cursor, err := collection.Find(context.TODO(), bson.D{})
-	// cursor, err := collection.Find(context.TODO(), filter)
-	cursor, err := collection.Find(context.Background(), bson.D{{}})
-
-	if err != nil {
-		log.Error(err, "Failed to find users -- it keeps breaking here")
-		return nil, err
-	}
-	defer cursor.Close(context.TODO())
-
-	for cursor.Next(context.TODO()) {
-		var user User
-		err := cursor.Decode(&user)
-		if err != nil {
-			log.Fatal(err, "Failed to decode user")
-			return nil, err
-		}
-		results = append(results, user)
-	}
-
-	if err := cursor.Err(); err != nil {
-		log.Fatal(err, "Failed to iterate over users")
-		return nil, err
-	}
-
-	return results, nil
-}
-
-// func NewUser(w http.ResponseWriter, r *http.Request) *User {
-// 	var user User
-// 	err := json.NewDecoder(r.Body).Decode(&user)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		log.Error("Failed to decode user")
-// 		return nil
-// 	}
-
-// 	// user.Id = uuid.New()
-// 	// add the new user to the database and return the user
-
-// 	return &user
-// }
