@@ -33,11 +33,11 @@ func (db *Database) Connect() {
 		log.Fatal(err, "Failed to connect to MongoDB")
 	}
 
-	defer func() {
-		if err := Client.Disconnect(context.TODO()); err != nil {
-			log.Fatal(err, "Failed to disconnect from MongoDB")
-		}
-	}()
+	// defer func() {
+	// 	if err := Client.Disconnect(context.TODO()); err != nil {
+	// 		log.Fatal(err, "Failed to disconnect from MongoDB")
+	// 	}
+	// }()
 
 	// send ping to confirm a successful connection
 	if err := Client.Database("admin").RunCommand(context.TODO(), bson.D{{
