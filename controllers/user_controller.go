@@ -14,12 +14,9 @@ import (
 
 type User types.User
 
-func user_collection() *mongo.Collection {
-	return database.Client.Database("go-ws").Collection("users")
+func Collection(collection string) *mongo.Collection {
+	return database.Client.Database("go-ws").Collection(collection)
 }
-
-
-
 
 // gets a single user (by _id) from the database
 func GetUserFromDatabase(id string) (types.User, error) {
@@ -30,7 +27,7 @@ func GetUserFromDatabase(id string) (types.User, error) {
 	}
 
 	var result types.User
-	db := user_collection()
+	db := Collection("users")
 	// collection := database.Client.Database("go-ws").Collection("users")
 	// err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
 	err = db.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
@@ -45,7 +42,7 @@ func GetUserFromDatabase(id string) (types.User, error) {
 // gets all users from the database
 func GetAllUsersFromDatabase() ([]User, error) {
 	// collection := database.Client.Database("go-ws").Collection("users")
-	db := user_collection()
+	db := Collection("users")
 
 	var results []User
 	// cursor, err := collection.Find(context.Background(), bson.D{{}})

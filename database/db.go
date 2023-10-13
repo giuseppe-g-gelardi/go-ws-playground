@@ -49,11 +49,3 @@ func (db *Database) Connect() {
 	log.Info("Successfully connected to MongoDB")
 }
 
-
-// func data() *mongo.Database {
-// 	return database.Client.Database("go-ws")
-// }
-
-// func _collection() *mongo.Collection {
-// 	return data().Collection("users")
-// }
