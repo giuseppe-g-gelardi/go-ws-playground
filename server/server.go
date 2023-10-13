@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	e "playground.com/m/errors"
 	"playground.com/m/types"
 
 	"github.com/charmbracelet/log"
@@ -18,7 +19,8 @@ func (s *Server) StartServer() {
 	port := ":" + s.Port
 	log.Info("Starting server on port:", s.Port)
 	err := http.ListenAndServe(port, nil)
-	if err != nil {
-		log.Fatal(err, "Failed to start server")
-	}
+	e.Fatal(err, "Failed to start server")
+	// if err != nil {
+	// 	log.Fatal(err, "Failed to start server")
+	// }
 }

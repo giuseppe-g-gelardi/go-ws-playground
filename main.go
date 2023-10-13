@@ -6,6 +6,7 @@ import (
 	"playground.com/m/database"
 	"playground.com/m/routes"
 	"playground.com/m/server"
+	e "playground.com/m/errors"
 
 	"github.com/charmbracelet/log"
 	"github.com/joho/godotenv"
@@ -20,9 +21,10 @@ var (
 func init() {
 	// load the .env
 	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	e.Fatal(err, "Error loading .env file")
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 	log.Info("Successfully loaded .env file")
 
 	// set the port and uri

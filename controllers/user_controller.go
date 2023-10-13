@@ -3,70 +3,80 @@ package controllers
 import (
 	"context"
 
-	"playground.com/m/database"
 	"playground.com/m/types"
+	e "playground.com/m/errors"
 
-	"github.com/charmbracelet/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type User types.User
 
-func Collection(collection string) *mongo.Collection {
-	return database.Client.Database("go-ws").Collection(collection)
+func CreateNewUser(user User) (User, error) {
+	db := Collection("users")
+
+	result, err := db.InsertOne(context.Background(), user)
+	e.Err(err, "Failed to insert user")
+	// if err != nil {
+	// 	log.Error(err, "Failed to insert user")
+	// 	return User{}, err
+	// }
+
+	objectID := result.InsertedID.(primitive.ObjectID)
+	user.Id = objectID.Hex()
+
+	return user, nil
 }
 
 // gets a single user (by _id) from the database
 func GetUserFromDatabase(id string) (types.User, error) {
 	objectID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		log.Error("Invalid User ID format")
-		return types.User{}, err
-	}
+	e.Err(err, "Invalid User ID format")
+	// if err != nil {
+	// 	log.Error(err, "Invalid User ID format")
+	// 	return types.User{}, err
+	// }
 
 	var result types.User
 	db := Collection("users")
-	// collection := database.Client.Database("go-ws").Collection("users")
-	// err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
 	err = db.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
-	if err != nil {
-		log.Error("User not found")
-		return types.User{}, err
-	}
+	e.Err(err, "User not found")
+	// if err != nil {
+	// 	log.Error(err, "User not found")
+	// 	return types.User{}, err
+	// }
 
 	return result, nil
 }
 
 // gets all users from the database
 func GetAllUsersFromDatabase() ([]User, error) {
-	// collection := database.Client.Database("go-ws").Collection("users")
 	db := Collection("users")
 
 	var results []User
-	// cursor, err := collection.Find(context.Background(), bson.D{{}})
 	cursor, err := db.Find(context.Background(), bson.D{{}})
-
-	if err != nil {
-		log.Error(err, "Failed to find users")
-		return nil, err
-	}
+	e.Err(err, "Failed to find users")
+	// if err != nil {
+	// 	log.Error(err, "Failed to find users")
+	// 	return nil, err
+	// }
 	defer cursor.Close(context.TODO())
 
 	for cursor.Next(context.TODO()) {
 		var user User
 		err := cursor.Decode(&user)
-		if err != nil {
-			log.Fatal(err, "Failed to decode user")
-			return nil, err
-		}
+		e.Err(err, "Failed to decode user")
+		// if err != nil {
+		// 	log.Fatal(err, "Failed to decode user")
+		// 	return nil, err
+		// }
 		results = append(results, user)
 	}
 
 	if err := cursor.Err(); err != nil {
-		log.Fatal(err, "Failed to iterate over users")
-		return nil, err
+		e.Err(err, "Failed to iterate over users")
+		// log.Fatal(err, "Failed to iterate over users")
+		// return nil, err
 	}
 
 	return results, nil
