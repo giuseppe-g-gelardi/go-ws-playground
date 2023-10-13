@@ -28,5 +28,4 @@ func GetUserFromDatabase(id string) (types.User, error) {
 	}
 
 	return result, nil
-
 }

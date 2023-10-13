@@ -25,13 +25,6 @@ func QueryDBUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func QueryUser(w http.ResponseWriter, r *http.Response) {
-
-// 	log.Print("QueryUser called")
-
-// 	w.Header().Set("Content-Type", "application/json")
-
-// }
 
 // func NewUser(w http.ResponseWriter, r *http.Request) *User {
 // 	var user User
