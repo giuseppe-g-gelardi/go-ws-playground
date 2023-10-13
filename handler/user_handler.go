@@ -41,3 +41,19 @@ func QueryUser(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("User: %v", user)
 }
+
+func QueryDBUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := uc.GetAllUsersFromDatabase()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Error("Failed to get users from database")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(users); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Error("Failed to encode users")
+		return
+	}
+}

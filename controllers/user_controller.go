@@ -8,11 +8,32 @@ import (
 
 	"github.com/charmbracelet/log"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User types.User
 
+// gets a single user (by _id) from the database
+func GetUserFromDatabase(id string) (types.User, error) {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Error("Invalid User ID format")
+		return types.User{}, err
+	}
 
+	var result types.User
+	collection := database.Client.Database("go-ws").Collection("users")
+
+	err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
+	if err != nil {
+		log.Error("User not found")
+		return types.User{}, err
+	}
+
+	return result, nil
+}
+
+// gets all users from the database
 func GetAllUsersFromDatabase() ([]User, error) {
 	collection := database.Client.Database("go-ws").Collection("users")
 
