@@ -4,9 +4,9 @@ import (
 	"os"
 
 	"playground.com/m/database"
+	e "playground.com/m/errors"
 	"playground.com/m/routes"
 	"playground.com/m/server"
-	e "playground.com/m/errors"
 
 	"github.com/charmbracelet/log"
 	"github.com/joho/godotenv"
@@ -19,12 +19,8 @@ var (
 )
 
 func init() {
-	// load the .env
-	err := godotenv.Load()
+	err := godotenv.Load() // load the .env
 	e.Fatal(err, "Error loading .env file")
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
 	log.Info("Successfully loaded .env file")
 
 	// set the port and uri
@@ -34,14 +30,11 @@ func init() {
 }
 
 func main() {
-	// load route handlers
-	routes.LoadRoutes()
+	routes.LoadRoutes() // load route handlers
 
-	// connect to DB before starting server or things will break
 	db = database.NewDatabase(uri)
-	db.Connect()
+	db.Connect() // connect to DB before starting server or things will break
 
-	// start server
 	s := server.NewServer(port)
-	s.StartServer()
+	s.StartServer() // start server
 }

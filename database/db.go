@@ -32,9 +32,6 @@ func (db *Database) Connect() {
 	var err error
 	Client, err = mongo.Connect(context.TODO(), opts)
 	e.Fatal(err, "Failed to connect to MongoDB")
-	// if err != nil {
-	// 	log.Fatal(err, "Failed to connect to MongoDB")
-	// }
 
 	// *defer func() {
 	// *	if err := Client.Disconnect(context.TODO()); err != nil {
@@ -47,7 +44,6 @@ func (db *Database) Connect() {
 		Key:   "ping",
 		Value: 1,
 	}}).Err(); err != nil {
-		// log.Fatal(err, "Failed to ping MongoDB")
 		e.Fatal(err, "Failed to ping MongoDB")
 	}
 	log.Info("Successfully connected to MongoDB")

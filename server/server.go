@@ -20,7 +20,4 @@ func (s *Server) StartServer() {
 	log.Info("Starting server on port:", s.Port)
 	err := http.ListenAndServe(port, nil)
 	e.Fatal(err, "Failed to start server")
-	// if err != nil {
-	// 	log.Fatal(err, "Failed to start server")
-	// }
 }
