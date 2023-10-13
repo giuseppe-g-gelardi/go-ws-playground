@@ -9,9 +9,17 @@ import (
 	"github.com/charmbracelet/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type User types.User
+
+func user_collection() *mongo.Collection {
+	return database.Client.Database("go-ws").Collection("users")
+}
+
+
+
 
 // gets a single user (by _id) from the database
 func GetUserFromDatabase(id string) (types.User, error) {
@@ -22,9 +30,10 @@ func GetUserFromDatabase(id string) (types.User, error) {
 	}
 
 	var result types.User
-	collection := database.Client.Database("go-ws").Collection("users")
-
-	err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
+	db := user_collection()
+	// collection := database.Client.Database("go-ws").Collection("users")
+	// err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
+	err = db.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
 	if err != nil {
 		log.Error("User not found")
 		return types.User{}, err
@@ -35,10 +44,12 @@ func GetUserFromDatabase(id string) (types.User, error) {
 
 // gets all users from the database
 func GetAllUsersFromDatabase() ([]User, error) {
-	collection := database.Client.Database("go-ws").Collection("users")
+	// collection := database.Client.Database("go-ws").Collection("users")
+	db := user_collection()
 
 	var results []User
-	cursor, err := collection.Find(context.Background(), bson.D{{}})
+	// cursor, err := collection.Find(context.Background(), bson.D{{}})
+	cursor, err := db.Find(context.Background(), bson.D{{}})
 
 	if err != nil {
 		log.Error(err, "Failed to find users")
