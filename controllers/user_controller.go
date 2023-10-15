@@ -4,6 +4,7 @@ import (
 	"context"
 	// "net/http"
 
+	"github.com/charmbracelet/log"
 	e "playground.com/m/errors"
 	"playground.com/m/types"
 
@@ -25,6 +26,17 @@ func CreateNewUser(user User) (User, error) {
 	return user, nil
 }
 
+func DeleteUser(id string) (User, error) {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	e.Err(err, "Invalid User ID format")
+
+	var result User
+	db := Collection("users")
+	err = db.FindOneAndDelete(context.Background(), bson.M{"_id": objectID}).Decode(&result)
+	e.Err(err, "User not found")
+
+	return result, nil
+}
 
 // gets a single user (by _id) from the database
 func GetUserFromDatabase(id string) (User, error) {
@@ -34,6 +46,18 @@ func GetUserFromDatabase(id string) (User, error) {
 	var result User
 	db := Collection("users")
 	err = db.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
+	e.Err(err, "User not found")
+
+	return result, nil
+}
+
+func GetUserByUsername(username string) (User, error) {
+
+	log.Error("username: %v", username)
+
+	var result User
+	db := Collection("users")
+	err := db.FindOne(context.Background(), bson.M{"username": username}).Decode(&result)
 	e.Err(err, "User not found")
 
 	return result, nil
