@@ -15,11 +15,13 @@ type RequestBody struct {
 }
 
 func NewUser(w http.ResponseWriter, r *http.Request) {
-
 	var requestBody uc.User
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&requestBody)
 	e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
+
+	// check if the user already exists in the database
+	// check if the user already exists in the database
 
 	user, err := uc.CreateNewUser(requestBody)
 	e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to create new user")

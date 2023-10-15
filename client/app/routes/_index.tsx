@@ -21,7 +21,7 @@ export default function Index() {
         <div className="flex flex-col text-black" key={user.Id}>
           <li className="flex flex-col my-6">
             <Link to={`/users/${user.Id}`}>
-              {user.FirstName} {user.LastName} {user.Email} 
+              {user.Username} {user.FirstName} {user.LastName} {user.Email} 
             </Link>
           </li>
         </div>

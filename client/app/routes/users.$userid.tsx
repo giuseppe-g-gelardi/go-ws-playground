@@ -7,7 +7,6 @@ interface LoaderData {
   user: Awaited<ReturnType<typeof GetUserById>>;
 }
 
-// export const loader: LoaderFunction = async <T extends { userid: string }>({ params }: { params: T }) => {
 export const loader: LoaderFunction = async ({ params }) => {
   console.log({ params })
   const user = await GetUserById(params.userid!)
@@ -26,7 +25,6 @@ export default function UserPage() {
       </div>
     </main>
   )
-
 }
 
 export const meta: MetaFunction = () => {

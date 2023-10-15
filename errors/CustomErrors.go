@@ -32,3 +32,11 @@ func Fatal(e error, msg string) {
 		log.Fatal(e, msg)
 	}
 }
+
+func GenericError[T any](e error, msg string, data T) (T, error) {
+	if e != nil {
+		log.Error(e, msg)
+		return data, e
+	}
+	return data, nil
+}

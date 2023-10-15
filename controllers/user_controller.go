@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"context"
+	// "net/http"
 
-	"playground.com/m/types"
 	e "playground.com/m/errors"
+	"playground.com/m/types"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,12 +25,13 @@ func CreateNewUser(user User) (User, error) {
 	return user, nil
 }
 
+
 // gets a single user (by _id) from the database
-func GetUserFromDatabase(id string) (types.User, error) {
+func GetUserFromDatabase(id string) (User, error) {
 	objectID, err := primitive.ObjectIDFromHex(id)
 	e.Err(err, "Invalid User ID format")
 
-	var result types.User
+	var result User
 	db := Collection("users")
 	err = db.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&result)
 	e.Err(err, "User not found")
