@@ -22,6 +22,8 @@ func userRoutes() {
 	http.HandleFunc("/users", handler.QueryDBUsers)
 	http.HandleFunc("/user", handler.QueryUser)
 	http.HandleFunc("/newuser", handler.NewUser)
+	http.HandleFunc("/deleteuser", handler.DeleteUser)
+	http.HandleFunc("/username", handler.QueryUserByUsername)
 }
 
 /** as an example
