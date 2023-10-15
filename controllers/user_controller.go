@@ -4,11 +4,12 @@ import (
 	"context"
 	// "net/http"
 
-	"github.com/charmbracelet/log"
+	// "github.com/charmbracelet/log"
 	e "playground.com/m/errors"
 	"playground.com/m/types"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -53,11 +54,25 @@ func GetUserFromDatabase(id string) (User, error) {
 
 func GetUserByUsername(username string) (User, error) {
 
-	log.Error("username: %v", username)
-
 	var result User
 	db := Collection("users")
 	err := db.FindOne(context.Background(), bson.M{"username": username}).Decode(&result)
+	e.Err(err, "User not found")
+
+	return result, nil
+}
+
+
+func UpdateUser(id string, user User) (User, error) {
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	e.Err(err, "Invalid User ID format")
+
+	db := Collection("users")
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	var result User
+	err = db.FindOneAndUpdate(context.Background(), bson.M{"_id": objectID}, bson.M{"$set": user}, opts).Decode(&result)
 	e.Err(err, "User not found")
 
 	return result, nil

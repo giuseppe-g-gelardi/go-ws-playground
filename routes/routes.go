@@ -3,27 +3,28 @@ package routes
 import (
 	"net/http"
 
-	"playground.com/m/handler"
+	h "playground.com/m/handler"
 
 	"github.com/charmbracelet/log"
 )
 
 func LoadRoutes() {
-	http.HandleFunc("/", handler.HelloHandler) // ol' faithful
+	http.HandleFunc("/", h.HelloHandler) // ol' faithful
 
 	userRoutes()
 
 	// ...otherRoutes()
-	
+
 	log.Info("Successfully loaded routes")
 }
 
 func userRoutes() {
-	http.HandleFunc("/users", handler.QueryDBUsers)
-	http.HandleFunc("/user", handler.QueryUser)
-	http.HandleFunc("/newuser", handler.NewUser)
-	http.HandleFunc("/deleteuser", handler.DeleteUser)
-	http.HandleFunc("/username", handler.QueryUserByUsername)
+	http.HandleFunc("/users", h.QueryDBUsers)
+	http.HandleFunc("/user", h.QueryUser)
+	http.HandleFunc("/newuser", h.NewUser)
+	http.HandleFunc("/deleteuser", h.DeleteUser)
+	http.HandleFunc("/username", h.QueryUserByUsername)
+	http.HandleFunc("/updateuser", h.QueryUserAndUpdate)
 }
 
 /** as an example
@@ -31,4 +32,3 @@ func userRoutes() {
 ** 	 http.HandleFunc("/posts", handler.PostsHandler)
 ** }
 ***/
-
