@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"context"
-	// "net/http"
 
-	"github.com/charmbracelet/log"
 	e "playground.com/m/errors"
 	"playground.com/m/types"
 
@@ -15,6 +13,7 @@ import (
 
 type User types.User
 
+// creates a new user in the database
 func CreateNewUser(user User) (User, error) {
 	db := Collection("users")
 
@@ -27,6 +26,7 @@ func CreateNewUser(user User) (User, error) {
 	return user, nil
 }
 
+// deletes a single user (by _id) from the database
 func DeleteUser(id string) (User, error) {
 	objectID, err := primitive.ObjectIDFromHex(id)
 	e.Err(err, "Invalid User ID format")
@@ -62,16 +62,11 @@ func GetUserByUsername(username string) (User, error) {
 	return result, nil
 }
 
+// updates a single user (by _id) from the database
 func UpdateUser(id string, user User) (interface{}, error) {
-
-	// log.Debugf("UpdateUser-ID-PARAM: %v", id)
-	log.Debugf("UpdateUser-USER-PARAM: %v", user)
-	// log.Infof("UpdateUser-USER.IIIIIIIDDDDDDDD-PARAM: %v", user.Id)
-	// log.Infof("UpdateUser-USER.Email-PARAM: %v", user.Email)
 
 	objectID, err := primitive.ObjectIDFromHex(user.Id)
 	e.Err(err, "Invalid User ID format")
-	// log.Debugf("UpdateUser-objectID: %v", objectID)
 
 	db := Collection("users")
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
@@ -80,23 +75,18 @@ func UpdateUser(id string, user User) (interface{}, error) {
 		"$set": bson.M{
 			"first_name": user.FirstName,
 			"last_name":  user.LastName,
-			"user_name":  user.Username,
+			"username":   user.Username,
 			"email":      user.Email,
 			"password":   user.Password,
 		},
 	}
 
-	var result interface{}
+	var result User
 
-	// log.Infof("UPDATEUSER-MONGO_LOG %v", update)
-
-	// db_err := db.FindOneAndUpdate(context.Background(), bson.M{"_id": user.Id}, bson.M{"$set": user}, opts).Decode(&result)
 	db_err := db.FindOneAndUpdate(context.Background(), bson.M{"_id": objectID}, update, opts).Decode(&result)
 	if db_err != nil {
-		log.Errorf("UPDATEUSER-MONGO_LOG %v", db_err)
 		return User{}, db_err
 	}
-	// e.Err(db_err, "User not found")
 
 	return result, nil
 }

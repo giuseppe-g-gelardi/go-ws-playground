@@ -24,7 +24,6 @@ func userRoutes() {
 	http.HandleFunc("/newuser", h.NewUser)
 	http.HandleFunc("/deleteuser", h.DeleteUser)
 	http.HandleFunc("/username", h.QueryUserByUsername)
-	// http.HandleFunc("/updateuser/{userid}", h.QueryUserAndUpdate)
 	http.HandleFunc("/updateuser", h.QueryUserAndUpdate)
 }
 

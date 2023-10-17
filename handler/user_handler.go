@@ -20,8 +20,7 @@ func NewUser(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&requestBody)
 	e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
 
-	// check if the user already exists in the database
-	// check if the user already exists in the database
+	// ! check if the user already exists in the database
 
 	user, err := uc.CreateNewUser(requestBody)
 	e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to create new user")
@@ -30,8 +29,7 @@ func NewUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(&user); err != nil {
 		e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode user")
 	}
-
-	log.Printf("User: %v", user)
+	log.Infof("User: %v", user)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -49,8 +47,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(&user); err != nil {
 		e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode user")
 	}
-
-	log.Printf("User: %v", user)
+	log.Infof("User: %v", user)
 }
 
 func QueryUser(w http.ResponseWriter, r *http.Request) {
@@ -69,8 +66,7 @@ func QueryUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(&user); err != nil {
 		e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode user")
 	}
-
-	log.Printf("User: %v", user)
+	log.Infof("User: %v", user)
 }
 
 func QueryUserByUsername(w http.ResponseWriter, r *http.Request) {
@@ -88,47 +84,28 @@ func QueryUserByUsername(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(&user); err != nil {
 		e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode user")
 	}
+	log.Infof("User: %v", user)
 }
 
-// func QueryUserAndUpdate(w http.ResponseWriter, r *http.Request) {
-// 	log.Error("QueryUserAndUpdate")
-// 	log.Info("URL", r.URL.Query().Get("userid"))
-
-// }
-
 func QueryUserAndUpdate(w http.ResponseWriter, r *http.Request) {
-	// var requestBody RequestBody
-	// decoder := json.NewDecoder(r.Body)
-	// err := decoder.Decode(&requestBody)
-	// e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
 	var requestBody uc.User
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&requestBody)
-	if err != nil {
-		e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
-		return
-	}
-
-	// log the request body
-	log.Errorf("QueryUserAndUpdate-requestBody: %v", requestBody)
+	e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
 
 	userID := r.URL.Query().Get("userid")
 
-	// existingUser, err := uc.GetUserFromDatabase(userID)
-	// e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to get user from database")
-	// // log.Errorf("QueryUserAndUpdate-ExistingUser: %v", existingUser)
+	// ? check if there is an existing user, if not, create a new user
 
 	updatedUser, err := uc.UpdateUser(userID, requestBody)
 	e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to update user")
-	// log.Errorf("QueryUserAndUpdate-UpdatedUser: %v", updatedUser)
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(&updatedUser); err != nil {
 		e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode user")
 	}
 
-	// log.Printf("User: %v", user)
-	log.Printf("UpdatedUser: %v", updatedUser)
+	log.Infof("UpdatedUser: %v", updatedUser)
 }
 
 func QueryDBUsers(w http.ResponseWriter, r *http.Request) {
@@ -139,4 +116,5 @@ func QueryDBUsers(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(users); err != nil {
 		e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode users")
 	}
+	log.Infof("Users: %v", users)
 }
