@@ -17,7 +17,7 @@ func NewServer(port string) *Server {
 
 func (s *Server) StartServer() {
 	port := ":" + s.Port
-	log.Info("Starting server on port:", s.Port)
+	log.Infof("Starting server on port: %v", s.Port)
 	err := http.ListenAndServe(port, nil)
 	e.Fatal(err, "Failed to start server")
 }

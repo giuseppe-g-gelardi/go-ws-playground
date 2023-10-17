@@ -4,13 +4,13 @@ import (
 	"context"
 	// "net/http"
 
-	// "github.com/charmbracelet/log"
+	"github.com/charmbracelet/log"
 	e "playground.com/m/errors"
 	"playground.com/m/types"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type User types.User
@@ -62,18 +62,41 @@ func GetUserByUsername(username string) (User, error) {
 	return result, nil
 }
 
+func UpdateUser(id string, user User) (interface{}, error) {
 
-func UpdateUser(id string, user User) (User, error) {
+	// log.Debugf("UpdateUser-ID-PARAM: %v", id)
+	log.Debugf("UpdateUser-USER-PARAM: %v", user)
+	// log.Infof("UpdateUser-USER.IIIIIIIDDDDDDDD-PARAM: %v", user.Id)
+	// log.Infof("UpdateUser-USER.Email-PARAM: %v", user.Email)
 
-	objectID, err := primitive.ObjectIDFromHex(id)
+	objectID, err := primitive.ObjectIDFromHex(user.Id)
 	e.Err(err, "Invalid User ID format")
+	// log.Debugf("UpdateUser-objectID: %v", objectID)
 
 	db := Collection("users")
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
-	var result User
-	err = db.FindOneAndUpdate(context.Background(), bson.M{"_id": objectID}, bson.M{"$set": user}, opts).Decode(&result)
-	e.Err(err, "User not found")
+	update := bson.M{
+		"$set": bson.M{
+			"first_name": user.FirstName,
+			"last_name":  user.LastName,
+			"user_name":  user.Username,
+			"email":      user.Email,
+			"password":   user.Password,
+		},
+	}
+
+	var result interface{}
+
+	// log.Infof("UPDATEUSER-MONGO_LOG %v", update)
+
+	// db_err := db.FindOneAndUpdate(context.Background(), bson.M{"_id": user.Id}, bson.M{"$set": user}, opts).Decode(&result)
+	db_err := db.FindOneAndUpdate(context.Background(), bson.M{"_id": objectID}, update, opts).Decode(&result)
+	if db_err != nil {
+		log.Errorf("UPDATEUSER-MONGO_LOG %v", db_err)
+		return User{}, db_err
+	}
+	// e.Err(db_err, "User not found")
 
 	return result, nil
 }

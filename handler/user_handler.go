@@ -97,30 +97,38 @@ func QueryUserByUsername(w http.ResponseWriter, r *http.Request) {
 // }
 
 func QueryUserAndUpdate(w http.ResponseWriter, r *http.Request) {
-	var requestBody RequestBody
+	// var requestBody RequestBody
+	// decoder := json.NewDecoder(r.Body)
+	// err := decoder.Decode(&requestBody)
+	// e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
+	var requestBody uc.User
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&requestBody)
-	e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
+	if err != nil {
+		e.BadRequest(w, err, http.StatusBadRequest, "Invalid JSON request")
+		return
+	}
 
-	// userID := requestBody.User_id
+	// log the request body
+	log.Errorf("QueryUserAndUpdate-requestBody: %v", requestBody)
 
 	userID := r.URL.Query().Get("userid")
-	log.Errorf("userid: %v", userID)
 
-	user, err := uc.GetUserFromDatabase(userID)
-	e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to get user from database")
+	// existingUser, err := uc.GetUserFromDatabase(userID)
+	// e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to get user from database")
+	// // log.Errorf("QueryUserAndUpdate-ExistingUser: %v", existingUser)
 
-	log.Infof("User: %v", user)
+	updatedUser, err := uc.UpdateUser(userID, requestBody)
+	e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to update user")
+	// log.Errorf("QueryUserAndUpdate-UpdatedUser: %v", updatedUser)
 
-	// updatedUser, err := uc.UpdateUser(userID, user)
-	// e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to update user")
-
-	// w.Header().Set("Content-Type", "application/json")
-	// if err := json.NewEncoder(w).Encode(&updatedUser); err != nil {
-	// 	e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode user")
-	// }
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(&updatedUser); err != nil {
+		e.InternalServerError(w, err, http.StatusInternalServerError, "Failed to encode user")
+	}
 
 	// log.Printf("User: %v", user)
+	log.Printf("UpdatedUser: %v", updatedUser)
 }
 
 func QueryDBUsers(w http.ResponseWriter, r *http.Request) {
